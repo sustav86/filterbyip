@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+    <display-name>YAHOO</display-name>
+    <welcome-file-list>
+        <!--<welcome-file>index.jsp</welcome-file>-->
+        <welcome-file>SimpleForm.html</welcome-file>
+    </welcome-file-list>
+
+    <servlet>
+        <servlet-name>SimpleServlet</servlet-name>
+        <servlet-class>ua.sustav.serv.SimpleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SimpleServlet</servlet-name>
+        <url-pattern>/jaboo</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>InitJSP</servlet-name>
+        <jsp-file>/initpage.jsp</jsp-file>
+        <init-param>
+            <param-name>defaultUser</param-name>
+            <param-value>Default User Name</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>InitJSP</servlet-name>
+        <url-pattern>/initpage.jsp</url-pattern>
+    </servlet-mapping>
+
+
+    <filter>
+        <filter-name>IPFilter</filter-name>
+        <filter-class>ua.sustav.serv.IpFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>IPFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+</web-app>
