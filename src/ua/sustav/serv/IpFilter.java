@@ -9,8 +9,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,7 +22,7 @@ public class IpFilter implements Filter {
 
     private static final String FILE_WITH_IP = "/WEB-INF/resource/ip.txt";
     private FilterConfig filterConfig;
-    private List<String> listOfIP = new ArrayList<>();
+    private Map<String, String> mapOfIP = new ConcurrentHashMap<>();
     long lastModified;
 
     public IpFilter() {
@@ -46,6 +46,7 @@ public class IpFilter implements Filter {
             path = Paths.get(fileName.toURI());
             File file = path.toFile();
             if (lastModified != file.lastModified()) {
+                mapOfIP.clear();
                 lastModified = file.lastModified();
                 readIpListFromFile(path);
             }
@@ -58,7 +59,7 @@ public class IpFilter implements Filter {
             httpResponse = (HttpServletResponse) servletResponse;
         }
 
-        if (!listOfIP.contains(userIp)) {
+        if (mapOfIP.containsKey(userIp)) {
             httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access the servlet!");
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
@@ -70,10 +71,10 @@ public class IpFilter implements Filter {
 
         try (Stream<String> stream = Files.lines(path)) {
 
-            listOfIP = stream
+            mapOfIP = stream
                     .filter(line -> !line.startsWith("#"))
                     .map(String::toUpperCase)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toMap(line -> line, line -> line));
 
         } catch (IOException e) {
 
